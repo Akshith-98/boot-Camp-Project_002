@@ -1,0 +1,36 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "Boot2"
+		},
+		"ls_Sqlserver_password": {
+			"value": ""
+		},
+		"ls_std4_accountKey": {
+			"value": ""
+		},
+		"ls_Sqlserver_properties_typeProperties_server": {
+			"value": "akssqlserver.database.windows.net"
+		},
+		"ls_Sqlserver_properties_typeProperties_database": {
+			"value": "Akssqldb"
+		},
+		"ls_Sqlserver_properties_typeProperties_userName": {
+			"value": "Akshith-98"
+		},
+		"ls_api_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com/Akshith-98/boot-Camp-Project_002/refs/heads/main/sales_sample.json"
+		},
+		"ls_std4_properties_typeProperties_url": {
+			"value": "https://std4.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
