@@ -1,0 +1,9 @@
+{
+	"name": "Boot2",
+	"location": "canadacentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1e5e9632-58f7-4144-93e1-1e715466779b",
+		"tenantId": "54801efd-3cf7-4fca-9064-f289b6166efa"
+	}
+}
