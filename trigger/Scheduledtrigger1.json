@@ -1,0 +1,25 @@
+{
+	"name": "Scheduledtrigger1",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pipeline1",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 24,
+				"startTime": "2025-03-12T22:47:00",
+				"endTime": "2025-03-17T22:47:00",
+				"timeZone": "Eastern Standard Time"
+			}
+		}
+	}
+}

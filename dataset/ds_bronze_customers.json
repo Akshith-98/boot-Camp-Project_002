@@ -1,5 +1,5 @@
 {
-	"name": "ds_bronze_sales",
+	"name": "ds_bronze_customers",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_std4",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "sales_sample",
+				"fileName": "customer-sample",
 				"fileSystem": "bronze"
 			},
 			"columnDelimiter": ",",
