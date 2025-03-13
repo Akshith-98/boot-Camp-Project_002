@@ -17,13 +17,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "Customers"
-				},
-				{
-					"dataset": {
-						"referenceName": "ds_silver_sales",
-						"type": "DatasetReference"
-					},
-					"name": "Sales"
 				}
 			],
 			"sinks": [
@@ -33,13 +26,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
-				},
-				{
-					"dataset": {
-						"referenceName": "ds_FinalSales_sample",
-						"type": "DatasetReference"
-					},
-					"name": "sink3"
 				},
 				{
 					"dataset": {
@@ -72,18 +58,6 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Customers",
-				"source(output(",
-				"          {Final Amount} as integer,",
-				"          {Final Customer Id} as integer,",
-				"          {Final ProductId} as integer,",
-				"          {Final Quantity} as integer,",
-				"          {Final SaleID} as integer,",
-				"          {Final date} as date",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false,",
-				"     documentForm: 'documentPerLine') ~> Sales",
 				"Customers sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -101,31 +75,6 @@
 				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> sink2",
-				"Sales sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          {Final Quantity} as integer,",
-				"          {Final Customer Id} as integer,",
-				"          {Final SaleID} as integer,",
-				"          {Final ProductId} as integer,",
-				"          {Final date} as date,",
-				"          {Final Amount} as integer",
-				"     ),",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     mapColumn(",
-				"          {Final Quantity},",
-				"          {Final Customer Id},",
-				"          {Final SaleID},",
-				"          {Final ProductId},",
-				"          {Final date},",
-				"          {Final Amount}",
-				"     )) ~> sink3",
 				"Products sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
