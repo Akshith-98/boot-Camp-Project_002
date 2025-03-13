@@ -85,7 +85,7 @@
 				"     ),",
 				"     skipDuplicateMapInputs: false,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"source3 derive({Final Quantity} = iif(!isNull(category), category, iif(!isNull(value3), value3, Quantity)),",
+				"source3 derive({Final Quantity} = iif(!isNull(Quantity), Quantity, iif(!isNull(value3), value3,category )),",
 				"          {Final Customer Id} = iif(!isNull(CustomerID),CustomerID, value1),",
 				"          {Final SaleID} = iif(!isNull(SaleID),SaleID, id),",
 				"          {Final ProductId} = iif(!isNull(ProductID),ProductID,value2 ),",
