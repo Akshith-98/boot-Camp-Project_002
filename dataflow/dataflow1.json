@@ -26,13 +26,27 @@
 					"name": "Sales"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_silver_sales",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "Derived1"
 				},
 				{
 					"name": "select1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derived2"
 				}
 			],
 			"scriptLines": [
@@ -85,8 +99,8 @@
 				"          {Final date} = iif(!isNull(SaleDate), toString(SaleDate, 'yyyy-MM-dd'), \r",
 				"    iif(!isNull(date), toString(date, 'yyyy-MM-dd'), 'N/A'))\r",
 				",",
-				"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount, iif(!isNull(amount), amount,0))) ~> derivedColumn1",
-				"derivedColumn1 select(mapColumn(",
+				"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount, iif(!isNull(amount), amount,0))) ~> Derived1",
+				"Derived1 select(mapColumn(",
 				"          {Final Quantity},",
 				"          {Final Customer Id},",
 				"          {Final SaleID},",
@@ -95,7 +109,17 @@
 				"          {Final Amount}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1"
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 filter(!isNull({Final SaleID}) || !isNull({Final Customer Id}) || !isNull({Final ProductId}) || !isNull({Final date}) || !isNull({Final Quantity}) || !isNull({Final Amount})\r",
+				") ~> filter1",
+				"Customers derive() ~> derived2",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
