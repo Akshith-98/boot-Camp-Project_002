@@ -1,0 +1,19 @@
+{
+	"name": "ds_bronze_sales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_std4",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "sales_sample",
+				"fileSystem": "bronze"
+			}
+		},
+		"schema": {}
+	}
+}
