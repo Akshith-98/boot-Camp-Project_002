@@ -146,7 +146,8 @@
 				"          ProductID,",
 				"          ProductName,",
 				"          Category,",
-				"          Price",
+				"          Price,",
+				"          StockQuantity",
 				"     )) ~> sink4"
 			]
 		}
