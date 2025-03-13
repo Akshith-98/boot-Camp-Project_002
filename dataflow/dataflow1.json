@@ -13,17 +13,17 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "ds_bronze_customers",
-						"type": "DatasetReference"
-					},
-					"name": "Customers"
-				},
-				{
-					"dataset": {
 						"referenceName": "ds_bronze_sales",
 						"type": "DatasetReference"
 					},
 					"name": "Sales"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_bronze_customers",
+						"type": "DatasetReference"
+					},
+					"name": "Customers"
 				}
 			],
 			"sinks": [
@@ -44,9 +44,6 @@
 				},
 				{
 					"name": "filter1"
-				},
-				{
-					"name": "derived2"
 				}
 			],
 			"scriptLines": [
@@ -60,16 +57,6 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Products",
-				"source(output(",
-				"          ProductID as string,",
-				"          ProductName as string,",
-				"          Category as string,",
-				"          Price as string,",
-				"          StockQuantity as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> Customers",
 				"source(output(",
 				"          CustomerID as integer,",
 				"          ProductID as integer,",
@@ -89,6 +76,16 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> Sales",
+				"source(output(",
+				"          ProductID as string,",
+				"          ProductName as string,",
+				"          Category as string,",
+				"          Price as string,",
+				"          StockQuantity as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Customers",
 				"Sales derive({Final Quantity} = iif(!isNull(Quantity), Quantity, \r",
 				"    iif(!isNull(value3),value3, \r",
 				"        iif(!isNull(category), category, 0)))\r",
@@ -112,7 +109,6 @@
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"select1 filter(!isNull({Final SaleID}) || !isNull({Final Customer Id}) || !isNull({Final ProductId}) || !isNull({Final date}) || !isNull({Final Quantity}) || !isNull({Final Amount})\r",
 				") ~> filter1",
-				"Customers derive() ~> derived2",
 				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     umask: 0022,",
