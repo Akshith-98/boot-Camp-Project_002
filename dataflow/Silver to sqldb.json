@@ -17,6 +17,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "Customers"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_sales",
+						"type": "DatasetReference"
+					},
+					"name": "Sales"
 				}
 			],
 			"sinks": [
@@ -33,9 +40,23 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink4"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_FinalSales_sample",
+						"type": "DatasetReference"
+					},
+					"name": "sink5"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          ProductID as integer,",
@@ -58,6 +79,30 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Customers",
+				"source(output(",
+				"          {Final Amount} as integer,",
+				"          {Final Customer Id} as integer,",
+				"          {Final ProductId} as integer,",
+				"          {Final Quantity} as integer,",
+				"          {Final SaleID} as integer,",
+				"          {Final date} as date",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> Sales",
+				"Sales derive({Final date} = iif(isNull({Final date}), '0000-00-00', toString({Final date}, 'yyyy-MM-dd'))\r",
+				") ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          {Final Amount},",
+				"          {Final Customer Id},",
+				"          {Final ProductId},",
+				"          {Final Quantity},",
+				"          {Final SaleID},",
+				"          {Final date}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
 				"Customers sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -97,7 +142,32 @@
 				"          Category,",
 				"          Price,",
 				"          StockQuantity",
-				"     )) ~> sink4"
+				"     )) ~> sink4",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          {Final Quantity} as integer,",
+				"          {Final Customer Id} as integer,",
+				"          {Final SaleID} as integer,",
+				"          {Final ProductId} as integer,",
+				"          {Final date} as date,",
+				"          {Final Amount} as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {Final Quantity},",
+				"          {Final Customer Id},",
+				"          {Final SaleID},",
+				"          {Final ProductId},",
+				"          {Final date},",
+				"          {Final Amount}",
+				"     )) ~> sink5"
 			]
 		}
 	}
