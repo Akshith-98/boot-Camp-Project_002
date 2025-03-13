@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "Products_sample",
 				"fileSystem": "silver"
 			},
 			"columnDelimiter": ",",
