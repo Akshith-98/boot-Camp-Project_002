@@ -40,6 +40,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink3"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_FinalProducts_sample1",
+						"type": "DatasetReference"
+					},
+					"name": "sink4"
 				}
 			],
 			"transformations": [],
@@ -118,7 +125,29 @@
 				"          {Final ProductId},",
 				"          {Final date},",
 				"          {Final Amount}",
-				"     )) ~> sink3"
+				"     )) ~> sink3",
+				"Products sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductID as integer,",
+				"          ProductName as string,",
+				"          Category as string,",
+				"          Price as integer,",
+				"          StockQuantity as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          ProductID,",
+				"          ProductName,",
+				"          Category,",
+				"          Price",
+				"     )) ~> sink4"
 			]
 		}
 	}
