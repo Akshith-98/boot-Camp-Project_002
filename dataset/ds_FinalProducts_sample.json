@@ -34,7 +34,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "FinalProducts_sample"
+			"table": "FinalProducts_sample1"
 		}
 	}
 }

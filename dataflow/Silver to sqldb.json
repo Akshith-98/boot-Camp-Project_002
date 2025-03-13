@@ -29,13 +29,6 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_FinalProducts_sample",
-						"type": "DatasetReference"
-					},
-					"name": "sink1"
-				},
-				{
-					"dataset": {
 						"referenceName": "ds_Finalcustomer_sample",
 						"type": "DatasetReference"
 					},
@@ -84,28 +77,6 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> Sales",
-				"Products sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     input(",
-				"          ProductID as integer,",
-				"          ProductName as string,",
-				"          Category as string,",
-				"          Price as integer,",
-				"          StockQuantity as integer",
-				"     ),",
-				"     deletable:false,",
-				"     insertable:true,",
-				"     updateable:false,",
-				"     upsertable:false,",
-				"     format: 'table',",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     mapColumn(",
-				"          ProductID,",
-				"          ProductName,",
-				"          Category,",
-				"          Price",
-				"     )) ~> sink1",
 				"Customers sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
