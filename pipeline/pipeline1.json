@@ -101,7 +101,7 @@
 				]
 			},
 			{
-				"name": "Data flow1",
+				"name": "Bronze to Silver",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -127,7 +127,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflow1",
+						"referenceName": "Bronze to Silver",
 						"type": "DataFlowReference"
 					},
 					"compute": {

@@ -1,0 +1,46 @@
+{
+	"name": "ds_FinalSales_sample",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_Sqlserver",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "Final Quantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Final Customer Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Final SaleID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Final ProductId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Final date",
+				"type": "date"
+			},
+			{
+				"name": "Final Amount",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "FinalSales_sample"
+		}
+	}
+}
