@@ -32,18 +32,44 @@
 						"referenceName": "ds_silver_sales",
 						"type": "DatasetReference"
 					},
+					"name": "sink2"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_products",
+						"type": "DatasetReference"
+					},
 					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_silver_customers",
+						"type": "DatasetReference"
+					},
+					"name": "sink3"
 				}
 			],
 			"transformations": [
 				{
-					"name": "Derived1"
+					"name": "Derived2"
 				},
 				{
-					"name": "select1"
+					"name": "select2"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "derived1"
 				},
 				{
 					"name": "filter1"
+				},
+				{
+					"name": "derived3"
+				},
+				{
+					"name": "filter3"
 				}
 			],
 			"scriptLines": [
@@ -97,8 +123,8 @@
 				"          {Final date} = iif(!isNull(SaleDate), toString(SaleDate, 'yyyy-MM-dd'), \r",
 				"    iif(!isNull(date), toString(date, 'yyyy-MM-dd'), 'N/A'))\r",
 				",",
-				"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount, iif(!isNull(amount), amount,0))) ~> Derived1",
-				"Derived1 select(mapColumn(",
+				"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount, iif(!isNull(amount), amount,0))) ~> Derived2",
+				"Derived2 select(mapColumn(",
 				"          {Final Quantity},",
 				"          {Final Customer Id},",
 				"          {Final SaleID},",
@@ -107,16 +133,54 @@
 				"          {Final Amount}",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 filter(!isNull({Final SaleID}) || !isNull({Final Customer Id}) || !isNull({Final ProductId}) || !isNull({Final date}) || !isNull({Final Quantity}) || !isNull({Final Amount})\r",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 filter(!isNull({Final SaleID}) || !isNull({Final Customer Id}) || !isNull({Final ProductId}) || !isNull({Final date}) || !isNull({Final Quantity}) || !isNull({Final Amount})\r",
+				") ~> filter2",
+				"Products derive(ProductID = iif(isNull(ProductID), 0, ProductID)\r",
+				",",
+				"          ProductName = iif(isNull(ProductName), 'N/A', ProductName),",
+				"          Category = iif(isNull(Category), 'N/A', Category)\r",
+				",",
+				"          Price = iif(isNull(Price), 0, Price)\r",
+				",",
+				"          StockQuantity = iif(isNull(StockQuantity), 'N/A', StockQuantity)) ~> derived1",
+				"derived1 filter(!(isNull(ProductID) && isNull(ProductName) && isNull(Category) && isNull(Price) && isNull(StockQuantity))\r",
 				") ~> filter1",
+				"Customers derive(CustomerID = iif(isNull(CustomerID), 0, CustomerID)\r",
+				",",
+				"          CustomerName = iif(isNull(CustomerName), 'N/A', CustomerName)\r",
+				",",
+				"          Email = iif(isNull(Email), 'N/A', Email)\r",
+				",",
+				"          Phone = iif(isNull(Phone), 0, Phone)\r",
+				",",
+				"          City = iif(isNull(City), 'N/A', City)\r",
+				",",
+				"          Country = iif(isNull(Country), 'N/A',Country)\r",
+				") ~> derived3",
+				"derived3 filter(!(isNull(CustomerID) && isNull(CustomerName) && isNull(Email) && isNull(Phone) && isNull(City) && isNull(Country))\r",
+				") ~> filter3",
+				"filter2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink2",
 				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     umask: 0022,",
 				"     preCommands: [],",
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"filter3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink3"
 			]
 		}
 	}
