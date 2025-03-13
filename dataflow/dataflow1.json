@@ -29,10 +29,10 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "select1"
+					"name": "derivedColumn1"
 				},
 				{
-					"name": "derivedColumn1"
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -75,22 +75,22 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> source3",
-				"derivedColumn1 select(mapColumn(",
-				"          Quantity = {Final Quantity},",
-				"          Amount = TotalAmount,",
-				"          Sales_ID = {Final SaleID},",
-				"          ProductId = {Final ProductId},",
-				"          Customer_Id = {Final Customer Id},",
-				"          date = {Final date}",
-				"     ),",
-				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: true) ~> select1",
 				"source3 derive({Final Quantity} = iif(!isNull(Quantity), Quantity, iif(!isNull(value3), value3,category )),",
 				"          {Final Customer Id} = iif(!isNull(CustomerID),CustomerID, value1),",
 				"          {Final SaleID} = iif(!isNull(SaleID),SaleID, id),",
 				"          {Final ProductId} = iif(!isNull(ProductID),ProductID,value2 ),",
 				"          {Final date} = iif(!isNull(SaleDate),SaleDate,date ),",
-				"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount,amount)) ~> derivedColumn1"
+				"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount,amount)) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          {Final Quantity},",
+				"          {Final Customer Id},",
+				"          {Final SaleID},",
+				"          {Final ProductId},",
+				"          {Final date},",
+				"          {Final Amount}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
 			]
 		}
 	}
