@@ -149,7 +149,7 @@
 						]
 					},
 					{
-						"name": "Data flow1",
+						"name": "Bronze to Silver",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
@@ -175,7 +175,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "dataflow1",
+								"referenceName": "Bronze to Silver",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -185,6 +185,45 @@
 									"sink2": {},
 									"sink1": {},
 									"sink3": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Silver to sqldb",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Bronze to Silver",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Silver to sqldb",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"Products": {},
+									"Customers": {},
+									"sink2": {},
+									"sink4": {}
 								}
 							},
 							"staging": {},
@@ -206,7 +245,8 @@
 				"[concat(variables('factoryId'), '/datasets/ds_bronze_sales')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sqlserver')]",
 				"[concat(variables('factoryId'), '/datasets/ds_bronze_customers')]",
-				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+				"[concat(variables('factoryId'), '/dataflows/Bronze to Silver')]",
+				"[concat(variables('factoryId'), '/dataflows/Silver to sqldb')]"
 			]
 		},
 		{
@@ -411,6 +451,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "Customers_sample",
 						"fileSystem": "silver"
 					},
 					"columnDelimiter": ",",
@@ -438,6 +479,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "Products_sample",
 						"fileSystem": "silver"
 					},
 					"columnDelimiter": ",",
@@ -465,6 +507,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": "Sales_sample",
 						"fileSystem": "silver"
 					}
 				},
@@ -638,7 +681,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"name": "[concat(parameters('factoryName'), '/Bronze to Silver')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -761,7 +804,7 @@
 						"          {Final SaleID} = iif(!isNull(SaleID), SaleID, iif(!isNull(id), id,0)),",
 						"          {Final ProductId} = iif(!isNull(ProductID),ProductID, iif(!isNull(value2), value2,0)),",
 						"          {Final date} = iif(!isNull(SaleDate), toString(SaleDate, 'yyyy-MM-dd'), \r",
-						"    iif(!isNull(date), toString(date, 'yyyy-MM-dd'), 'N/A')),",
+						"    iif(!isNull(date), toString(date, 'yyyy-MM-dd'), '000-00-00')),",
 						"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount, iif(!isNull(amount), amount,0))) ~> Derived2",
 						"Derived2 select(mapColumn(",
 						"          {Final Quantity},",
@@ -821,6 +864,261 @@
 				"[concat(variables('factoryId'), '/datasets/ds_silver_sales')]",
 				"[concat(variables('factoryId'), '/datasets/ds_silver_products')]",
 				"[concat(variables('factoryId'), '/datasets/ds_silver_customers')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Silver to sqldb')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ds_silver_products",
+								"type": "DatasetReference"
+							},
+							"name": "Products"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_silver_customers",
+								"type": "DatasetReference"
+							},
+							"name": "Customers"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_Finalcustomer_sample",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_FinalProducts_sample1",
+								"type": "DatasetReference"
+							},
+							"name": "sink4"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          ProductID as integer,",
+						"          ProductName as string,",
+						"          Category as string,",
+						"          Price as integer,",
+						"          StockQuantity as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Products",
+						"source(output(",
+						"          CustomerID as integer,",
+						"          CustomerName as string,",
+						"          Email as string,",
+						"          Phone as integer,",
+						"          City as string,",
+						"          Country as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Customers",
+						"Customers sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          CustomerID as integer,",
+						"          CustomerName as string,",
+						"          Email as string,",
+						"          Phone as integer,",
+						"          City as string,",
+						"          Country as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink2",
+						"Products sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          ProductID as integer,",
+						"          ProductName as string,",
+						"          Category as string,",
+						"          Price as integer,",
+						"          StockQuantity as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          ProductID,",
+						"          ProductName,",
+						"          Category,",
+						"          Price,",
+						"          StockQuantity",
+						"     )) ~> sink4"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_silver_products')]",
+				"[concat(variables('factoryId'), '/datasets/ds_silver_customers')]",
+				"[concat(variables('factoryId'), '/datasets/ds_Finalcustomer_sample')]",
+				"[concat(variables('factoryId'), '/datasets/ds_FinalProducts_sample1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_Finalcustomer_sample')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_Sqlserver",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Email",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Phone",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Country",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "FinalCustomers_sample"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_Sqlserver')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_FinalSales_sample')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_Sqlserver",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "Final Quantity",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Final Customer Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Final SaleID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Final ProductId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Final date",
+						"type": "date"
+					},
+					{
+						"name": "Final Amount",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "FinalSales_sample"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_Sqlserver')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_FinalProducts_sample1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_Sqlserver",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Category",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Price",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "StockQuantity",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "FinalProducts_sample1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_Sqlserver')]"
 			]
 		}
 	]
