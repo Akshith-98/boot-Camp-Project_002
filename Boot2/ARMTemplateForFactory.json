@@ -185,16 +185,14 @@
 									"sink2": {},
 									"sink1": {},
 									"sink3": {}
-								},
-								"linkedServiceParameters": {}
+								}
 							},
 							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
 							},
-							"traceLevel": "Fine",
-							"runConcurrently": false
+							"traceLevel": "Fine"
 						}
 					}
 				],
@@ -261,6 +259,79 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_bronze_products')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_std4",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "products_sample.csv",
+						"fileSystem": "bronze"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "String"
+					},
+					{
+						"name": "ProductName",
+						"type": "String"
+					},
+					{
+						"name": "Category",
+						"type": "String"
+					},
+					{
+						"name": "Price",
+						"type": "String"
+					},
+					{
+						"name": "StockQuantity",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_bronze_sales')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_std4",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "sales_sample",
+						"fileSystem": "bronze"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_gitapi')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -276,6 +347,131 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ls_api')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_silver')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_std4",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "silver"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "String"
+					},
+					{
+						"name": "ProductName",
+						"type": "String"
+					},
+					{
+						"name": "Category",
+						"type": "String"
+					},
+					{
+						"name": "Price",
+						"type": "String"
+					},
+					{
+						"name": "StockQuantity",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_silver_customers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_std4",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "silver"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_silver_products')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_std4",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "silver"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_silver_sales')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_std4",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "silver"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
 			]
 		},
 		{
@@ -560,14 +756,12 @@
 						"     ignoreNoFilesFound: false) ~> Customers",
 						"Sales derive({Final Quantity} = iif(!isNull(Quantity), Quantity, \r",
 						"    iif(!isNull(value3),value3, \r",
-						"        iif(!isNull(category), category, 0)))\r",
-						",",
+						"        iif(!isNull(category), category, 0))),",
 						"          {Final Customer Id} = iif(!isNull(CustomerID),CustomerID, iif(!isNull(value1), value1,0)),",
 						"          {Final SaleID} = iif(!isNull(SaleID), SaleID, iif(!isNull(id), id,0)),",
 						"          {Final ProductId} = iif(!isNull(ProductID),ProductID, iif(!isNull(value2), value2,0)),",
 						"          {Final date} = iif(!isNull(SaleDate), toString(SaleDate, 'yyyy-MM-dd'), \r",
-						"    iif(!isNull(date), toString(date, 'yyyy-MM-dd'), 'N/A'))\r",
-						",",
+						"    iif(!isNull(date), toString(date, 'yyyy-MM-dd'), 'N/A')),",
 						"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount, iif(!isNull(amount), amount,0))) ~> Derived2",
 						"Derived2 select(mapColumn(",
 						"          {Final Quantity},",
@@ -579,34 +773,23 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select2",
-						"select2 filter(!isNull({Final SaleID}) || !isNull({Final Customer Id}) || !isNull({Final ProductId}) || !isNull({Final date}) || !isNull({Final Quantity}) || !isNull({Final Amount})\r",
-						") ~> filter2",
-						"Products derive(ProductID = iif(isNull(ProductID), 0, ProductID)\r",
-						",",
+						"select2 filter(!isNull({Final SaleID}) || !isNull({Final Customer Id}) || !isNull({Final ProductId}) || !isNull({Final date}) || !isNull({Final Quantity}) || !isNull({Final Amount})) ~> filter2",
+						"Products derive(ProductID = iif(isNull(ProductID), 0, ProductID),",
 						"          ProductName = iif(isNull(ProductName), 'N/A', ProductName),",
-						"          Category = iif(isNull(Category), 'N/A', Category)\r",
-						",",
-						"          Price = iif(isNull(Price), 0, Price)\r",
-						",",
+						"          Category = iif(isNull(Category), 'N/A', Category),",
+						"          Price = iif(isNull(Price), 0, Price),",
 						"          StockQuantity = iif(isNull(StockQuantity), 'N/A', StockQuantity)) ~> derived1",
-						"derived1 filter(!(isNull(ProductID) && isNull(ProductName) && isNull(Category) && isNull(Price) && isNull(StockQuantity))\r",
-						") ~> filter1",
-						"Customers derive(CustomerID = iif(isNull(CustomerID), 0, CustomerID)\r",
-						",",
-						"          CustomerName = iif(isNull(CustomerName), 'N/A', CustomerName)\r",
-						",",
-						"          Email = iif(isNull(Email), 'N/A', Email)\r",
-						",",
-						"          Phone = iif(isNull(Phone), 0, Phone)\r",
-						",",
-						"          City = iif(isNull(City), 'N/A', City)\r",
-						",",
-						"          Country = iif(isNull(Country), 'N/A',Country)\r",
-						") ~> derived3",
-						"derived3 filter(!(isNull(CustomerID) && isNull(CustomerName) && isNull(Email) && isNull(Phone) && isNull(City) && isNull(Country))\r",
-						") ~> filter3",
+						"derived1 filter(!(isNull(ProductID) && isNull(ProductName) && isNull(Category) && isNull(Price) && isNull(StockQuantity))) ~> filter1",
+						"Customers derive(CustomerID = iif(isNull(CustomerID), 0, CustomerID),",
+						"          CustomerName = iif(isNull(CustomerName), 'N/A', CustomerName),",
+						"          Email = iif(isNull(Email), 'N/A', Email),",
+						"          Phone = iif(isNull(Phone), 0, Phone),",
+						"          City = iif(isNull(City), 'N/A', City),",
+						"          Country = iif(isNull(Country), 'N/A',Country)) ~> derived3",
+						"derived3 filter(!(isNull(CustomerID) && isNull(CustomerName) && isNull(Email) && isNull(Phone) && isNull(City) && isNull(Country))) ~> filter3",
 						"filter2 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     partitionFileNames:['Sales_sample.csv'],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
@@ -614,6 +797,7 @@
 						"     skipDuplicateMapOutputs: true) ~> sink2",
 						"filter1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     partitionFileNames:['Products_sample.csv'],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
@@ -621,6 +805,7 @@
 						"     skipDuplicateMapOutputs: true) ~> sink1",
 						"filter3 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
+						"     partitionFileNames:['Customers_sample.csv'],",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
@@ -636,207 +821,6 @@
 				"[concat(variables('factoryId'), '/datasets/ds_silver_sales')]",
 				"[concat(variables('factoryId'), '/datasets/ds_silver_products')]",
 				"[concat(variables('factoryId'), '/datasets/ds_silver_customers')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_bronze_sales')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_std4",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "sales_sample",
-						"fileSystem": "bronze"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_silver_sales')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_std4",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "sales",
-						"fileSystem": "silver"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_bronze_products')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_std4",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "products_sample.csv",
-						"fileSystem": "bronze"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "ProductID",
-						"type": "String"
-					},
-					{
-						"name": "ProductName",
-						"type": "String"
-					},
-					{
-						"name": "Category",
-						"type": "String"
-					},
-					{
-						"name": "Price",
-						"type": "String"
-					},
-					{
-						"name": "StockQuantity",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_silver_products')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_std4",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "customers",
-						"fileSystem": "silver"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_silver_customers')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_std4",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "customers",
-						"fileSystem": "silver"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ds_silver')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ls_std4",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileSystem": "silver"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "ProductID",
-						"type": "String"
-					},
-					{
-						"name": "ProductName",
-						"type": "String"
-					},
-					{
-						"name": "Category",
-						"type": "String"
-					},
-					{
-						"name": "Price",
-						"type": "String"
-					},
-					{
-						"name": "StockQuantity",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ls_std4')]"
 			]
 		}
 	]
