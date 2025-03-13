@@ -120,7 +120,7 @@
 				"          {Final SaleID} = iif(!isNull(SaleID), SaleID, iif(!isNull(id), id,0)),",
 				"          {Final ProductId} = iif(!isNull(ProductID),ProductID, iif(!isNull(value2), value2,0)),",
 				"          {Final date} = iif(!isNull(SaleDate), toString(SaleDate, 'yyyy-MM-dd'), \r",
-				"    iif(!isNull(date), toString(date, 'yyyy-MM-dd'), 'N/A')),",
+				"    iif(!isNull(date), toString(date, 'yyyy-MM-dd'), '000-00-00')),",
 				"          {Final Amount} = iif(!isNull(TotalAmount),TotalAmount, iif(!isNull(amount), amount,0))) ~> Derived2",
 				"Derived2 select(mapColumn(",
 				"          {Final Quantity},",
